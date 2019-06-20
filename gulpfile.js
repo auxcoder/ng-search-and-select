@@ -20,7 +20,7 @@ var testDirectory = path.join(rootDirectory, './test/unit');
 var sourceFiles = [
   // Make sure module files are handled first
   path.join(sourceDirectory, '/**/*.module.js'),
-  path.join(distDirectory, '/templateCacheHtml.js')
+  path.join(distDirectory, '/template-cache-html.js')
 ];
 
 var watchFiles = [
@@ -45,9 +45,9 @@ function partials() {
 			ignoreCustomFragments: [/{{.*?}}/],
 		}))
 		.pipe(
-			angularTemplatecache('templateCacheHtml.js', {
+			angularTemplatecache('template-cache-html.js', {
 				module: 'ngSearchAndSelect.component',
-				root: 'app',
+				// root: 'ng-search-and-select',
 			})
 		)
 		.pipe(gulp.dest('./dist'));
