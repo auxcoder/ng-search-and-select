@@ -5,13 +5,7 @@ var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var path = require('path');
 var plumber = require('gulp-plumber'); // Prevent pipe breaking caused by errors from gulp plugins
-// var runSequence = require('run-sequence');
 var eslint = require('gulp-eslint');
-
-
-/**
- * File patterns
- **/
 
 // Root directory
 var rootDirectory = path.resolve('./');
@@ -46,9 +40,6 @@ gulp.task('build', function(done) {
 	done();
 });
 
-/**
- * Validate source JavaScript
- */
 gulp.task('lint', function () {
 	return gulp.src(lintFiles)
 		.pipe(plumber())
@@ -56,9 +47,6 @@ gulp.task('lint', function () {
 		.pipe(eslint.failOnError());
 });
 
-/**
- * Run test once and exit
- */
 gulp.task('test-src', function (done) {
 	karma.start({
 		configFile: __dirname + '/karma-src.conf.js',
@@ -66,9 +54,6 @@ gulp.task('test-src', function (done) {
 	}, done);
 });
 
-/**
- * Run test once and exit
- */
 gulp.task('test-dist-concatenated', function (done) {
 	karma.start({
 		configFile: __dirname + '/karma-dist-concatenated.conf.js',
@@ -76,9 +61,6 @@ gulp.task('test-dist-concatenated', function (done) {
 	}, done);
 });
 
-/**
- * Run test once and exit
- */
 gulp.task('test-dist-minified', function (done) {
 	karma.start({
 		configFile: __dirname + '/karma-dist-minified.conf.js',
@@ -95,6 +77,3 @@ gulp.task('watch', function () {
 
 gulp.task('process-all', gulp.series('lint', 'test-src', 'build'));
 gulp.task('default', gulp.series('process-all', 'watch'));
-// gulp.task('process-all', function (done) {
-//   runSequence('lint', 'test-src', 'build', done);
-// });
