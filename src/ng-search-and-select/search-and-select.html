@@ -1,0 +1,51 @@
+<div class="search-select-container" ng-class="{'disabled': $ctrl.disabled}">
+	<div
+		class="ss-input-container form-group"
+		ng-class="{'container-expanded': $ctrl.isOptionSelected()}"
+	>
+		<label
+			class="control-label"
+			ng-class="{'cover-expanded': $ctrl.isOptionSelected()}"
+		>
+			{{ $ctrl.placeholderText }}
+		</label>
+
+		<input
+			name="search_string{{ $ctrl.inputName }}"
+			type="text"
+			class="form-control"
+			placeholder="{{ $ctrl.placeholderText }}"
+			autocomplete="off"
+			ng-class="{'input-expanded': $ctrl.isOptionSelected()}"
+			ng-model="$ctrl.searchString"
+			ng-focus="$ctrl.ssFocus()"
+			ng-keyup="$ctrl.searchOptions()"
+			ng-blur="$ctrl.ssBlur()"
+			ng-disabled="$ctrl.disabled"
+			ng-required="$ctrl.required"
+		/>
+		<i
+			class="icon-base fa"
+			ng-class="{'icon-expanded': $ctrl.isOptionSelected(), '{{
+				$ctrl.fontAwesomeIcon
+			}}': true}"
+		></i>
+	</div>
+
+	<div class="results-container" ng-show="$ctrl.searching">
+		<ul
+			id="option-list"
+			class="option-list"
+			ng-show="$ctrl.filteredOptions.length > 0"
+		>
+			<li
+				id="option-list-item-{{ $index }}"
+				class="option-list-item"
+				ng-class="{'kb-focused': $ctrl.keyboardFocusIndex === $index}"
+				ng-repeat="option in $ctrl.filteredOptions track by $index"
+				ng-mousedown="$ctrl.selectOption(option)"
+				ng-bind-html="option.ss_display_html"
+			></li>
+		</ul>
+	</div>
+</div>
