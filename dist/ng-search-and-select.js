@@ -1,11 +1,7 @@
 (function (angular) {
 
-  // Create all modules and define dependencies to make sure they exist
-  // and are loaded in the correct order to satisfy dependency injection
-  // before all nested files are concatenated by Gulp
 
   function SearchSelectController($scope, $sanitize, $document) {
-		// todo: be able to define disable from expression parent
 		var $ctrl = this;
 		var labelFromKeys;
 		var inputHandler = new KeyInputHandler();
@@ -81,18 +77,16 @@
 			$ctrl.options[i].ss_index = i;
 		}
 
-		// sets selected index if an option is already selected.
 		function checkAndSetSelected(i) {
 			if ($ctrl.ngModel === null) {
 				return;
 			}
-			if ($ctrl.ngModel.$modelValue[$ctrl.idKey] === $ctrl.options[i][$ctrl.idKey]) {
+
+			if ($ctrl.ngModel.$modelValue && $ctrl.ngModel.$modelValue[$ctrl.idKey] === $ctrl.options[i][$ctrl.idKey]) {
 				$ctrl.selectedIndex = i;
 			}
 		}
 
-		// sets the ss_display_name for an option based on the
-		// keys specified in the labelFromKeys variable.
 		function setOptionDisplayName(i) {
 			var option = $ctrl.options[i];
 			var ss_display_name = '';
@@ -138,7 +132,6 @@
 			$ctrl.searchString = $ctrl.options[$ctrl.selectedIndex].ss_display_name;
 		}
 
-		// enables arrow key detection and resets search.
 		function ssFocus() {
 			$document.on('keydown', inputHandler.run);
 			$document.on('keyup', function() {
@@ -148,7 +141,6 @@
 			searchOptions();
 		}
 
-		// Disables arrow key detection and sets the displayed input string.
 		function ssBlur() {
 			$ctrl.keyboardFocusIndex = null;
 			angular.element(document).off('keydown', inputHandler.run);
@@ -172,7 +164,6 @@
 				var searchIndex = name.toLowerCase().indexOf(searchString);
 				if (searchIndex !== -1) {
 					var option = angular.copy($ctrl.options[i]);
-					// splitting option display name in order to style the matched substring.
 					var substringOne = option.ss_display_name.substring(0, searchIndex);
 					var substringTwo = option.ss_display_name.substring(searchIndex, searchIndex + searchString.length);
 					var substringThree = option.ss_display_name.substring(searchIndex + searchString.length);
@@ -193,7 +184,6 @@
 			return Boolean(angular.isObject($ctrl.ngModel.$viewValue) && Object.keys($ctrl.ngModel.$viewValue).length !== 0);
 		}
 
-		// An object for handling key inputs while focused on search-and-select.
 		function KeyInputHandler() {
 			this.run = function(e) {
 				if (readyForKeyInput === false) {
@@ -218,7 +208,6 @@
 				$scope.$apply();
 			};
 
-			// Move to previous option on up key press.
 			function up() {
 				if ($ctrl.keyboardFocusIndex === 0 || $ctrl.keyboardFocusIndex === null) {
 					return;
@@ -227,7 +216,6 @@
 				adjustScroll(false);
 			}
 
-			// Move to next option on down key press.
 			function down() {
 				if ($ctrl.keyboardFocusIndex === null) {
 					$ctrl.keyboardFocusIndex = 0;
@@ -244,7 +232,6 @@
 				adjustScroll(true);
 			}
 
-			// Close out search and select option on enter key press.
 			function enter(e) {
 				if ($ctrl.keyboardFocusIndex === null) {
 					return;
@@ -254,18 +241,15 @@
 				readyForKeyInput = true;
 			}
 
-			// Close out search on escape key press.
 			function escape(e) {
 				e.target.blur();
 				readyForKeyInput = true;
 			}
 
-			// Adjusts the scroll value of the list based on which listItem is currently focused.
 			function adjustScroll(isDownKey) {
 				var listId = 'option-list';
 				var listItemId = 'option-list-item-' + $ctrl.keyboardFocusIndex;
 
-				// Gets the "next" list item based on whether the down key or up key was pressed.
 				var nextListItemDirection = isDownKey ? 1 : -1;
 				var nextListItemId = 'option-list-item-' + ($ctrl.keyboardFocusIndex + nextListItemDirection);
 
@@ -273,36 +257,31 @@
 				var listItem = $document[0].getElementById(listItemId);
 				var nextListItem = $document[0].getElementById(nextListItemId) || listItem;
 
-				// adjusts scroll value when the nextListItem is ~below~ the viewable window.
 				if (nextListItem.offsetTop >= list.offsetHeight + list.scrollTop) {
 					list.scrollTop = nextListItem.offsetTop - list.offsetHeight + nextListItem.offsetHeight;
 				}
 
-				// adjusts scroll value when the nextListItem is ~above~ the viewable window.
 				if (list.scrollTop > nextListItem.offsetTop) {
 					list.scrollTop = nextListItem.offsetTop;
 				}
 			}
 		}
 
-		// Takes the divided display name, wraps the matched substring in a bold-styled span,
-		// and creates the displayHtml.
 		function buildDisplayHtml(substringOne, substringTwo, substringThree) {
 			var boldSubstring = '<span class="search-bold">' + substringTwo + '</span>';
 			return $sanitize(substringOne + boldSubstring + substringThree);
 		}
   }
+	SearchSelectController.$inject = ['$scope', '$sanitize', '$document'];
 
-  //////////////////////////////////////////////////////////////////////////////
 
-  // Config
-  angular.module('ngSearchAndSelect.config', [])
-    .value('ngSearchAndSelect.config', {
-      debug: true
-    });
+	angular.module('ngSearchAndSelect.config', [])
+	.value('ngSearchAndSelect.config', {
+		debug: true
+	});
 
-  // Modules
-  angular.module('ngSearchAndSelect.component', []).component('searchAndSelect', {
+	angular.module('ngSearchAndSelect.component', [])
+	.component('searchAndSelect', {
 		require: {
 			ngModel: 'ngModel',
 		},
@@ -315,7 +294,7 @@
 			placeholderText: '@',
 			fontAwesomeIcon: '@',
 		},
-		template: 'ng-search-and-select/components/search-and-select.html',
+		templateUrl: '/ng-search-and-select/search-and-select.html',
 		controller: SearchSelectController,
 	});
 
@@ -326,5 +305,8 @@
 			'ngSanitize'
 		]
 	);
-
 })(angular);
+
+angular.module('ngSearchAndSelect.component').run(function() { angular.element(document).find('head').prepend('<style type="text/css">.search-select-container{position:relative;font-weight:400}.search-select-container .disabled{opacity:0.5}.search-select-container div,.search-select-container ul,.search-select-container li,.search-select-container i{display:block}.search-select-container .ss-input-container{position:relative}.search-select-container .ss-input-container .form-control{height:44px}.search-select-container .ss-input-container .icon-base{position:absolute;z-index:3;top:calc(45%);right:10px;font-size:28px;pointer-events:none}.search-select-container .results-container{width:100%;position:absolute;z-index:200;top:100%}.search-select-container .results-container .option-list{height:auto;width:100%;max-height:300px;padding:0px;margin:0px;color:inherit;background-color:white;border:1px solid #ccc;border-top:none;box-shadow:0px 1px 3px 0.5px #bbb;list-style:none;overflow:auto}.search-select-container .results-container .option-list .option-list-item{padding:5px 15px 5px 15px;cursor:pointer}.search-select-container .results-container .option-list .option-list-item.kb-focused{background-color:silver}.search-select-container .results-container .option-list .option-list-item:hover{background-color:#b8b8b8}.search-select-container .results-container .option-list .option-list-item .search-bold{font-weight:bold}</style>');});
+
+angular.module('ngSearchAndSelect.component').run(['$templateCache', function($templateCache) {$templateCache.put('/ng-search-and-select/search-and-select.html','<div class="search-select-container" ng-class="{\'disabled\': $ctrl.disabled}">\n\t<div class="ss-input-container form-group" ng-class="{\'container-expanded\': $ctrl.isOptionSelected()}">\n\t\t<label class="control-label" ng-class="{\'cover-expanded\': $ctrl.isOptionSelected()}">\n\t\t\t{{ $ctrl.placeholderText }}\n\t\t</label>\n\n\t\t<input name="search_string{{ $ctrl.inputName }}" type="text" class="form-control" placeholder="{{ $ctrl.placeholderText }}" autocomplete="off" ng-class="{\'input-expanded\': $ctrl.isOptionSelected()}" ng-model="$ctrl.searchString" ng-focus="$ctrl.ssFocus()" ng-keyup="$ctrl.searchOptions()" ng-blur="$ctrl.ssBlur()" ng-disabled="$ctrl.disabled" ng-required="$ctrl.required">\n\t\t<i class="icon-base fa" ng-class="{\'icon-expanded\': $ctrl.isOptionSelected(), \'{{\n\t\t\t\t$ctrl.fontAwesomeIcon\n\t\t\t}}\': true}"></i>\n\t</div>\n\n\t<div class="results-container" ng-show="$ctrl.searching">\n\t\t<ul id="option-list" class="option-list" ng-show="$ctrl.filteredOptions.length > 0">\n\t\t\t<li id="option-list-item-{{ $index }}" class="option-list-item" ng-class="{\'kb-focused\': $ctrl.keyboardFocusIndex === $index}" ng-repeat="option in $ctrl.filteredOptions track by $index" ng-mousedown="$ctrl.selectOption(option)" ng-bind-html="option.ss_display_html"></li>\n\t\t</ul>\n\t</div>\n</div>\n');}]);
