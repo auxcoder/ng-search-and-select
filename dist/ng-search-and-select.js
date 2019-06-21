@@ -1,8 +1,8 @@
 (function (angular) {
 
-  // Create all modules and define dependencies to make sure they exist
-  // and are loaded in the correct order to satisfy dependency injection
-  // before all nested files are concatenated by Gulp
+	// Create all modules and define dependencies to make sure they exist
+	// and are loaded in the correct order to satisfy dependency injection
+	// before all nested files are concatenated by Gulp
 
   function SearchSelectController($scope, $sanitize, $document) {
 		// todo: be able to define disable from expression parent
@@ -14,6 +14,19 @@
 		$ctrl.$onInit = function() {
 			labelFromKeys = $ctrl.labelFromKeys.split(' ');
 			$ctrl.inputName = Date.now();
+			// how model values will appear in the view
+			$ctrl.ngModel.$formatters.push(function(value) {
+				if (angular.isDefined(value)) return value;
+				return '';
+			});
+			// how view values will be saved in the model
+			$ctrl.ngModel.$parsers.push(function(value) {
+				// clean properties used internally
+				// delete value.ss_display_html;
+				// delete value.ss_display_name;
+				// delete value.ss_index;
+				return value;
+			});
 		};
 
 		$ctrl.$onChanges = function(changesObj) {
@@ -86,7 +99,8 @@
 			if ($ctrl.ngModel === null) {
 				return;
 			}
-			if ($ctrl.ngModel.$modelValue[$ctrl.idKey] === $ctrl.options[i][$ctrl.idKey]) {
+
+			if ($ctrl.ngModel.$modelValue && $ctrl.ngModel.$modelValue[$ctrl.idKey] === $ctrl.options[i][$ctrl.idKey]) {
 				$ctrl.selectedIndex = i;
 			}
 		}
@@ -292,17 +306,19 @@
 			return $sanitize(substringOne + boldSubstring + substringThree);
 		}
   }
+	SearchSelectController.$inject = ['$scope', '$sanitize', '$document'];
 
   //////////////////////////////////////////////////////////////////////////////
 
-  // Config
-  angular.module('ngSearchAndSelect.config', [])
-    .value('ngSearchAndSelect.config', {
-      debug: true
-    });
+	// Config
+	angular.module('ngSearchAndSelect.config', [])
+	.value('ngSearchAndSelect.config', {
+		debug: true
+	});
 
-  // Modules
-  angular.module('ngSearchAndSelect.component', []).component('searchAndSelect', {
+	// Modules
+	angular.module('ngSearchAndSelect.component', [])
+	.component('searchAndSelect', {
 		require: {
 			ngModel: 'ngModel',
 		},
@@ -315,7 +331,7 @@
 			placeholderText: '@',
 			fontAwesomeIcon: '@',
 		},
-		template: 'ng-search-and-select/components/search-and-select.html',
+		templateUrl: '/ng-search-and-select/search-and-select.html',
 		controller: SearchSelectController,
 	});
 
@@ -326,5 +342,8 @@
 			'ngSanitize'
 		]
 	);
-
 })(angular);
+
+angular.module('ngSearchAndSelect.component').run(function() { angular.element(document).find('head').prepend('<style type="text/css">.search-select-container{position:relative;font-weight:400}.search-select-container .disabled{opacity:0.5}.search-select-container div,.search-select-container ul,.search-select-container li,.search-select-container i{display:block}.search-select-container .ss-input-container{position:relative}.search-select-container .ss-input-container .form-control{height:44px}.search-select-container .ss-input-container .icon-base{position:absolute;z-index:3;top:calc(45%);right:10px;font-size:28px;pointer-events:none}.search-select-container .results-container{width:100%;position:absolute;z-index:200;top:100%}.search-select-container .results-container .option-list{height:auto;width:100%;max-height:300px;padding:0px;margin:0px;color:inherit;background-color:white;border:1px solid #ccc;border-top:none;box-shadow:0px 1px 3px 0.5px #bbb;list-style:none;overflow:auto}.search-select-container .results-container .option-list .option-list-item{padding:5px 15px 5px 15px;cursor:pointer}.search-select-container .results-container .option-list .option-list-item.kb-focused{background-color:silver}.search-select-container .results-container .option-list .option-list-item:hover{background-color:#b8b8b8}.search-select-container .results-container .option-list .option-list-item .search-bold{font-weight:bold}</style>');});
+
+angular.module('ngSearchAndSelect.component').run(['$templateCache', function($templateCache) {$templateCache.put('/ng-search-and-select/search-and-select.html','<div class="search-select-container" ng-class="{\'disabled\': $ctrl.disabled}">\n\t<div class="ss-input-container form-group" ng-class="{\'container-expanded\': $ctrl.isOptionSelected()}">\n\t\t<label class="control-label" ng-class="{\'cover-expanded\': $ctrl.isOptionSelected()}">\n\t\t\t{{ $ctrl.placeholderText }}\n\t\t</label>\n\n\t\t<input name="search_string{{ $ctrl.inputName }}" type="text" class="form-control" placeholder="{{ $ctrl.placeholderText }}" autocomplete="off" ng-class="{\'input-expanded\': $ctrl.isOptionSelected()}" ng-model="$ctrl.searchString" ng-focus="$ctrl.ssFocus()" ng-keyup="$ctrl.searchOptions()" ng-blur="$ctrl.ssBlur()" ng-disabled="$ctrl.disabled" ng-required="$ctrl.required">\n\t\t<i class="icon-base fa" ng-class="{\'icon-expanded\': $ctrl.isOptionSelected(), \'{{\n\t\t\t\t$ctrl.fontAwesomeIcon\n\t\t\t}}\': true}"></i>\n\t</div>\n\n\t<div class="results-container" ng-show="$ctrl.searching">\n\t\t<ul id="option-list" class="option-list" ng-show="$ctrl.filteredOptions.length > 0">\n\t\t\t<li id="option-list-item-{{ $index }}" class="option-list-item" ng-class="{\'kb-focused\': $ctrl.keyboardFocusIndex === $index}" ng-repeat="option in $ctrl.filteredOptions track by $index" ng-mousedown="$ctrl.selectOption(option)" ng-bind-html="option.ss_display_html"></li>\n\t\t</ul>\n\t</div>\n</div>\n');}]);

@@ -1,3 +1,4 @@
+const fs = require('fs');
 var gulp = require('gulp');
 var karma = require('karma').server;
 var concat = require('gulp-concat');
@@ -7,34 +8,35 @@ var path = require('path');
 var plumber = require('gulp-plumber'); // Prevent pipe breaking caused by errors from gulp plugins
 var eslint = require('gulp-eslint');
 const htmlmin = require('gulp-htmlmin');
+var sass = require('gulp-sass');
 const angularTemplatecache = require('gulp-angular-templatecache');
 
-// Root directory
-var rootDirectory = path.resolve('./');
-
 // Source directory for build process
+var rootDirectory = path.resolve('./');
 var sourceDirectory = path.join(rootDirectory, './src');
 var distDirectory = path.join(rootDirectory, './dist');
+var tmpDirectory = path.join(rootDirectory, './.tmp');
 var testDirectory = path.join(rootDirectory, './test/unit');
-
 var sourceFiles = [
   // Make sure module files are handled first
   path.join(sourceDirectory, '/**/*.module.js'),
-  path.join(distDirectory, '/templateCacheHtml.js')
+  path.join('.tmp/*.js')
 ];
-
 var watchFiles = [
   // Make sure module files are handled first
   path.join(sourceDirectory, '/**/*.module.js'),
+  path.join(sourceDirectory, '/**/*.html'),
+  path.join(sourceDirectory, '/**/*.scss'),
   // Then add all JavaScript files
   // path.join(sourceDirectory, '/**/*.js')
 ];
-
 var lintFiles = [
   'gulpfile.js',
   // Karma configuration
   'karma-*.conf.js'
 ].concat(watchFiles);
+var MODULE_NAME = 'ngSearchAndSelect';
+var COMPONENT = 'component';
 
 // Partials templates
 gulp.task('partials', partials);
@@ -45,22 +47,39 @@ function partials() {
 			ignoreCustomFragments: [/{{.*?}}/],
 		}))
 		.pipe(
-			angularTemplatecache('templateCacheHtml.js', {
+			angularTemplatecache('template-cache-html.js', {
 				module: 'ngSearchAndSelect.component',
-				root: 'app',
+				// root: 'ng-search-and-select',
 			})
 		)
-		.pipe(gulp.dest('./dist'));
+		.pipe(gulp.dest('.tmp'));
 }
 
-gulp.task('build', gulp.series(partials, function(done) {
+gulp.task('styles', styles);
+function styles() {
+	return gulp.src('./src/**/*.scss')
+		.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+		.pipe(rename('styles.css'))
+		.pipe(gulp.dest(tmpDirectory));
+}
+
+gulp.task('prepend-styles', function (done) {
+	var filename = `${tmpDirectory}/styles.css`;
+	var css = fs.readFileSync(filename).toString();
+	var styles = `angular.module('${MODULE_NAME}.${COMPONENT}').run(function() { angular.element(document).find('head').prepend('<style type="text/css">${css}</style>')});`;
+	fs.writeFileSync(`${tmpDirectory}/styles.js`, styles);
+	done();
+});
+
+
+gulp.task('build', gulp.series(partials, styles, function(done) {
 	gulp.src(sourceFiles)
 		.pipe(plumber())
 		.pipe(concat('ng-search-and-select.js'))
-		.pipe(gulp.dest('./dist/'))
-		.pipe(uglify())
+		.pipe(gulp.dest(distDirectory))
+		.pipe(uglify().on('error', console.error))
 		.pipe(rename('ng-search-and-select.min.js'))
-		.pipe(gulp.dest('./dist'));
+		.pipe(gulp.dest(distDirectory));
 	done();
 }));
 
@@ -99,5 +118,5 @@ gulp.task('watch', function () {
 	gulp.watch(path.join(testDirectory, '/**/*.js'), gulp.series('test-src'));
 });
 
-gulp.task('process-all', gulp.series('lint', 'test-src', partials,'build'));
+gulp.task('process-all', gulp.series('lint', 'test-src', 'partials', 'build'));
 gulp.task('default', gulp.series('process-all', 'watch'));
