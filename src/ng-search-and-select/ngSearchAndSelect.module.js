@@ -297,14 +297,15 @@
 
   //////////////////////////////////////////////////////////////////////////////
 
-  // Config
-  angular.module('ngSearchAndSelect.config', [])
-    .value('ngSearchAndSelect.config', {
-      debug: true
-    });
+	// Config
+	angular.module('ngSearchAndSelect.config', [])
+	.value('ngSearchAndSelect.config', {
+		debug: true
+	});
 
-  // Modules
-  angular.module('ngSearchAndSelect.component', []).component('searchAndSelect', {
+	// Modules
+	angular.module('ngSearchAndSelect.component', [])
+	.component('searchAndSelect', {
 		require: {
 			ngModel: 'ngModel',
 		},
@@ -317,7 +318,7 @@
 			placeholderText: '@',
 			fontAwesomeIcon: '@',
 		},
-		template: 'ng-search-and-select/components/search-and-select.html',
+		templateUrl: '/ng-search-and-select/search-and-select.html',
 		controller: SearchSelectController,
 	});
 
@@ -328,5 +329,4 @@
 			'ngSanitize'
 		]
 	);
-
 })(angular);
