@@ -1,7 +1,7 @@
 {
   "name": "ng-search-and-select",
   "description": "Select and/or search component",
-  "version": "0.1.0",
+  "version": "0.0.10",
   "author": {
     "name": "Pavel Duran",
     "email": "auxcoder@gmail.com"
@@ -12,6 +12,7 @@
     "select",
     "ui"
   ],
+  "main": "dist/ng-search-and-select.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/auxcoder/ng-search-and-select.git"
