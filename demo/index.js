@@ -1,17 +1,26 @@
 (function(angular) {
-	'use strict';
+	// 'use strict';
 
 	angular
 		.module('demoApp', [
 			'ngSearchAndSelect'
 		])
-		.controller('DemoController', function($scope) {
-			$scope.options = [
-				{ name:'Physics', id:70 },
-				{ name:'Chemistry', id:80 },
-				{ name:'Math', id:65 },
-				{ name:'English', id:75 },
-				{ name:'Hindi', id:67 }
-			];
-		});
+		.controller('DemoController', ['$scope', '$timeout', function($scope, $timeout) {
+			$scope.title = 'Demo App for Search and Select component';
+			$scope.options = [];
+			$scope.isDisabled = false;
+			$scope.lesson = {id: null, name: null};
+			$timeout(function() {
+				$scope.options = [
+					{ id: 10, name: 'Physics' },
+					{ id: 11, name: 'Chemistry' },
+					{ id: 12, name: 'Math' },
+					{ id: 13, name: 'English' },
+					{ id: 14, name: 'Hindi' }
+				];
+			}, 1000);
+			$scope.onChangeSelectSystem = function onChangeSelectSystem(systemTypeObj) {
+				console.log('systemTypeObj > ', systemTypeObj); // eslint-disable-line
+			}
+		}]);
 })(angular);
