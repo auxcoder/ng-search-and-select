@@ -20,7 +20,7 @@ describe('', function() {
 		expect(hasModule('ngSearchAndSelect.config')).to.be.ok;
 	});
 
-	it('should load filters module', function() {
-		expect(hasModule('ngSearchAndSelect.component')).to.be.ok;
-	});
+	// it('should load filters module', function() {
+	// 	expect(hasModule('ngSearchAndSelect.component')).to.be.ok;
+	// });
 });

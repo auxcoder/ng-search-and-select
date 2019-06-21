@@ -14,6 +14,19 @@
 		$ctrl.$onInit = function() {
 			labelFromKeys = $ctrl.labelFromKeys.split(' ');
 			$ctrl.inputName = Date.now();
+			// how model values will appear in the view
+			$ctrl.ngModel.$formatters.push(function(value) {
+				if (angular.isDefined(value)) return value;
+				return '';
+			});
+			// how view values will be saved in the model
+			$ctrl.ngModel.$parsers.push(function(value) {
+				// clean properties used internally
+				// delete value.ss_display_html;
+				// delete value.ss_display_name;
+				// delete value.ss_index;
+				return value;
+			});
 		};
 
 		$ctrl.$onChanges = function(changesObj) {
