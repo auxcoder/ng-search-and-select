@@ -14,6 +14,7 @@
 		$ctrl.$onInit = function() {
 			labelFromKeys = $ctrl.labelFromKeys.split(' ');
 			$ctrl.inputName = Date.now();
+			$ctrl.icon = $ctrl.selectIcon;
 			// todo: use $formatters and $parsers to clean up object
 			// how model values will appear in the view
 			// $ctrl.ngModel.$formatters.push(function(value) {
@@ -309,7 +310,7 @@
   }
 	SearchSelectController.$inject = ['$scope', '$sanitize', '$document'];
 
-  //////////////////////////////////////////////////////////////////////////////
+  // Modules
 
 	// Config
 	angular.module('ngSearchAndSelect.config', [])
@@ -317,7 +318,7 @@
 		debug: true
 	});
 
-	// Modules
+	// Component
 	angular.module('ngSearchAndSelect.component', [])
 	.component('searchAndSelect', {
 		require: {
@@ -330,12 +331,13 @@
 			idKey: '@',
 			labelFromKeys: '@',
 			placeholderText: '@',
-			fontAwesomeIcon: '@',
+			selectIcon: '@',
 		},
 		templateUrl: '/ng-search-and-select/search-and-select.html',
 		controller: SearchSelectController,
 	});
 
+	// Main Module
 	angular.module('ngSearchAndSelect',
 		[
 			'ngSearchAndSelect.config',
