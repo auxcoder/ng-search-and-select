@@ -293,6 +293,7 @@
 			return $sanitize(substringOne + boldSubstring + substringThree);
 		}
   }
+	SearchSelectController.$inject = ['$scope', '$sanitize', '$document'];
 
   //////////////////////////////////////////////////////////////////////////////
 
