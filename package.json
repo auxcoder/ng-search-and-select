@@ -1,7 +1,7 @@
 {
   "name": "ng-search-and-select",
   "description": "Select and/or search component",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "author": {
     "name": "Pavel Duran",
     "email": "auxcoder@gmail.com"
