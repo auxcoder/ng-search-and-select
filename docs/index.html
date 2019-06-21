@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ng-app="demoApp" ng-strict-di="true">
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular-sanitize.min.js"></script>
+		<script src="../dist/ng-search-and-select.js"></script>
+
+		<base href="/" />
+		<meta charset="utf-8" />
+		<title>Search and Select component</title>
+		<meta name="description" content="Demo for Search and Select component" />
+		<meta name="theme-color" content="#1b80ac" />
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="default-src 'self' data: 'unsafe-inline' 'unsafe-eval' https: wss: ws://localhost:*; img-src 'self' * data:"
+		/>
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+			integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+			crossorigin="anonymous"
+		/>
+	</head>
+
+	<body id="demo" class="">
+		<noscript>
+			<h3>You need Javascript to use this site.</h3>
+			<p>
+				We relay heavily in Javascript to build a modern and full featured
+				Application, enable Javascript to work with our App.
+			</p>
+		</noscript>
+
+		<div class="container">
+			<div ng-controller="DemoController">
+				<h1 class="lead text-center">
+					{{ title }}
+				</h1>
+
+				<div class="row">
+					<div class="col-md-6">
+						<search-and-select
+							class="search-select"
+							ng-model="systemTypeObj"
+							options="options"
+							id-key="id"
+							label-from-keys="name"
+							placeholder-text="Select System Type"
+							font-awesome-icon="fa-chevron-down"
+							ng-change="onChangeSelectSystem(systemTypeObj)"
+							disabled="isDisabled"
+						></search-and-select>
+					</div>
+
+					<div class="col-md-6">
+						<label for="exampleInputFile">
+							Select to disable select component
+						</label>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" ng-model="isDisabled" /> Check me out
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="./demo/index.js"></script>
+	</body>
+</html>
