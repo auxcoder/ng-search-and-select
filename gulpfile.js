@@ -1,15 +1,16 @@
 const fs = require('fs');
-var gulp = require('gulp');
-var karma = require('karma').server;
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-var path = require('path');
-var plumber = require('gulp-plumber'); // Prevent pipe breaking caused by errors from gulp plugins
-var eslint = require('gulp-eslint');
+const gulp = require('gulp');
+const karma = require('karma').server;
+const concat = require('gulp-concat');
+const uglify = require('gulp-uglify');
+const rename = require('gulp-rename');
+const path = require('path');
+const plumber = require('gulp-plumber'); // Prevent pipe breaking caused by errors from gulp plugins
+const eslint = require('gulp-eslint');
 const htmlmin = require('gulp-htmlmin');
-var sass = require('gulp-sass');
+const sass = require('gulp-sass');
 const angularTemplatecache = require('gulp-angular-templatecache');
+var strip = require('gulp-strip-comments');
 
 // Source directory for build process
 var rootDirectory = path.resolve('./');
@@ -71,10 +72,10 @@ gulp.task('prepend-styles', function (done) {
 	done();
 });
 
-
 gulp.task('build', gulp.series(partials, styles, function(done) {
 	gulp.src(sourceFiles)
 		.pipe(plumber())
+		.pipe(strip())
 		.pipe(concat('ng-search-and-select.js'))
 		.pipe(gulp.dest(distDirectory))
 		.pipe(uglify().on('error', console.error))
