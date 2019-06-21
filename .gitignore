@@ -12,3 +12,6 @@ npm-debug.log
 
 # OS-specific
 .DS_Store
+
+# Project specifics
+.tmp/
