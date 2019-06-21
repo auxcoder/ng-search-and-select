@@ -1,8 +1,8 @@
 (function (angular) {
 
-  // Create all modules and define dependencies to make sure they exist
-  // and are loaded in the correct order to satisfy dependency injection
-  // before all nested files are concatenated by Gulp
+	// Create all modules and define dependencies to make sure they exist
+	// and are loaded in the correct order to satisfy dependency injection
+	// before all nested files are concatenated by Gulp
 
   function SearchSelectController($scope, $sanitize, $document) {
 		// todo: be able to define disable from expression parent
@@ -86,7 +86,8 @@
 			if ($ctrl.ngModel === null) {
 				return;
 			}
-			if ($ctrl.ngModel.$modelValue[$ctrl.idKey] === $ctrl.options[i][$ctrl.idKey]) {
+
+			if ($ctrl.ngModel.$modelValue && $ctrl.ngModel.$modelValue[$ctrl.idKey] === $ctrl.options[i][$ctrl.idKey]) {
 				$ctrl.selectedIndex = i;
 			}
 		}
