@@ -38,39 +38,103 @@
 
 		<div class="container">
 			<div ng-controller="DemoController">
-				<h1 class="lead text-center">
+				<h1 style="margin: 1em 0 1em 0">
 					{{ title }}
 				</h1>
 
 				<div class="row">
 					<div class="col-md-6">
+						<div>
+							Component bindings
+							<ul>
+								<li><strong>ng-model</strong>: will be bound to controller</li>
+								<li>
+									<strong>options</strong>: collection of the select element
+								</li>
+								<li>
+									<strong>id-key</strong> <em>string</em>: property of each of
+									the select element
+								</li>
+								<li>
+									<strong>label-from-keys</strong> <em>string</em>: space
+									delimited collections of keys used to build a label for the
+									select element
+								</li>
+								<li>
+									<strong>placeholder-text</strong> <em>string</em>: will be
+									used when no ng-model by default as the select placeholder
+								</li>
+								<li>
+									<strong>disabled</strong> <em>boolean</em>: will controll if
+									the select input is enabled/disabled
+								</li>
+								<li>
+									<strong>select-icon</strong> <em>string</em>: an icon class
+									name used for the select element
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<pre><code>
+&lt;search-and-select
+	class="search-select"
+	ng-model="lesson"
+	options="options"
+	id-key="id"
+	label-from-keys="name"
+	placeholder-text="Select System Type"
+	select-icon="glyphicon glyphicon-chevron-down"
+	ng-change="onChangeSelectSystem(lesson)"
+	disabled="isDisabled"
+&gt;
+&lt;/search-and-select&gt;
+						</code></pre>
+					</div>
+				</div>
+
+				<hr />
+
+				<div class="row">
+					<div class="col-md-6">
+						<h3>Demo</h3>
 						<search-and-select
 							class="search-select"
-							ng-model="systemTypeObj"
+							ng-model="lesson"
 							options="options"
 							id-key="id"
 							label-from-keys="name"
 							placeholder-text="Select System Type"
-							font-awesome-icon="fa-chevron-down"
-							ng-change="onChangeSelectSystem(systemTypeObj)"
+							select-icon="glyphicon glyphicon-chevron-down"
+							ng-change="onChangeSelectSystem(lesson)"
 							disabled="isDisabled"
 						></search-and-select>
+
+						<div>
+							<h4>Use</h4>
+							<p>
+								The element can be disabled setting the binding key
+								<code>disabled</code> to false, added to control cascade
+								selects.
+							</p>
+							<label for="exampleInputFile">
+								Select to disable select component
+							</label>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" ng-model="isDisabled" /> Check me out
+								</label>
+							</div>
+						</div>
+						<div>ng-module: {{ lesson | json }}</div>
 					</div>
 
-					<div class="col-md-6">
-						<label for="exampleInputFile">
-							Select to disable select component
-						</label>
-						<div class="checkbox">
-							<label>
-								<input type="checkbox" ng-model="isDisabled" /> Check me out
-							</label>
-						</div>
-					</div>
+					<div class="col-md-6"></div>
 				</div>
 			</div>
 		</div>
 
-		<script src="./demo/index.js"></script>
+		<script src="./docs/index.js"></script>
 	</body>
 </html>
