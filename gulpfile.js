@@ -1,6 +1,6 @@
 const fs = require('fs');
 const gulp = require('gulp');
-const karma = require('karma').server;
+const karma = require('karma');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
@@ -56,24 +56,26 @@ function partials() {
 		.pipe(gulp.dest('.tmp'));
 }
 
-gulp.task('styles', styles);
-function styles() {
+function toCss() {
 	return gulp.src('./src/**/*.scss')
-		.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+		.pipe(sass({
+			outputStyle: 'compressed',
+			sourceMap: true
+		}).on('error', sass.logError))
 		.pipe(rename('styles.css'))
 		.pipe(gulp.dest(tmpDirectory));
 }
 
-gulp.task('prepend-styles', function (done) {
+function styles(done) {
 	var filename = `${tmpDirectory}/styles.css`;
-	var css = fs.readFileSync(filename).toString();
+	var css = fs.readFileSync(filename).toString().replace(/\n.*$/gm, '');
 	var styles = `angular.module('${MODULE_NAME}.${COMPONENT}').run(function() { angular.element(document).find('head').prepend('<style type="text/css">${css}</style>')});`;
 	fs.writeFileSync(`${tmpDirectory}/styles.js`, styles);
 	done();
-});
+}
 
-gulp.task('build', gulp.series(partials, styles, function(done) {
-	gulp.src(sourceFiles)
+function build() {
+	return gulp.src(sourceFiles)
 		.pipe(plumber())
 		.pipe(strip())
 		.pipe(concat('ng-search-and-select.js'))
@@ -81,43 +83,51 @@ gulp.task('build', gulp.series(partials, styles, function(done) {
 		.pipe(uglify().on('error', console.error))
 		.pipe(rename('ng-search-and-select.min.js'))
 		.pipe(gulp.dest(distDirectory));
-	done();
-}));
+}
 
-gulp.task('lint', function () {
+function lint() {
 	return gulp.src(lintFiles)
 		.pipe(plumber())
 		.pipe(eslint.format())
 		.pipe(eslint.failOnError());
-});
+}
 
-gulp.task('test-src', function (done) {
-	karma.start({
-		configFile: __dirname + '/karma-src.conf.js',
-		singleRun: true
-	}, done);
-});
+function karmaFinishHandler(done) {
+	return (failCount = 0) => {
+		// eslint-disable-next-line angular/log
+		done(failCount ? console.log(`Failed ${failCount} tests.`) : null);
+	};
+}
 
-gulp.task('test-dist-concatenated', function (done) {
-	karma.start({
-		configFile: __dirname + '/karma-dist-concatenated.conf.js',
-		singleRun: true
-	}, done);
-});
+function test(done) {
+	const configFile = __dirname + '/karma-src.conf.js';
+	configFile.singleRun = false;
+	const karmaServer = new karma.Server({ configFile }, karmaFinishHandler(done));
+	karmaServer.start();
+}
 
-gulp.task('test-dist-minified', function (done) {
-	karma.start({
-		configFile: __dirname + '/karma-dist-minified.conf.js',
-		singleRun: true
-	}, done);
-});
 
-gulp.task('watch', function () {
+function testDist(done) {
+	const configFile = __dirname + '/karma-dist-concatenated.conf.js';
+	const karmaServer = new karma.Server({ configFile }, karmaFinishHandler(done));
+	karmaServer.start();
+}
+
+function testDistMin(done) {
+	const configFile = __dirname + '/karma-dist-minified.conf.js';
+	const karmaServer = new karma.Server({ configFile }, karmaFinishHandler(done));
+	karmaServer.start();
+}
+
+function watch() {
 	// Watch JavaScript files
-	gulp.watch(watchFiles, gulp.series('process-all'));
+	gulp.watch(watchFiles, gulp.series(lint, test, build));
 	// watch test files and re-run unit tests when changed
-	gulp.watch(path.join(testDirectory, '/**/*.js'), gulp.series('test-src'));
-});
+	gulp.watch(path.join(testDirectory, '/**/*.js'), gulp.series(test));
+}
 
-gulp.task('process-all', gulp.series('lint', 'test-src', 'partials', 'build'));
-gulp.task('default', gulp.series('process-all', 'watch'));
+exports.test = gulp.series(test);
+exports.testDist = gulp.series(testDist);
+exports.testDistMin = gulp.series(testDistMin);
+exports.build = gulp.series(partials, toCss, styles, build);
+exports.default = gulp.series(lint, test, build, watch);
