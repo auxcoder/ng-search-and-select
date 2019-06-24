@@ -1,6 +1,6 @@
 $gray-lighter: #c0c0c0;
 
-.search-select-container {
+.ss-container {
 	position: relative;
 	font-weight: 400;
 
@@ -8,24 +8,17 @@ $gray-lighter: #c0c0c0;
 		opacity: 0.5;
 	}
 
-	div,
-	ul,
-	li,
-	i {
-		display: block;
-	}
-
 	.ss-input-container {
 		position: relative;
 
-		.form-control {
+		.ss-input {
 			height: 44px;
 		}
 
 		.icon-base {
 			position: absolute;
 			z-index: 3;
-			top: calc(45%);
+			top: calc(50%);
 			right: 10px;
 			font-size: 28px;
 			pointer-events: none;
@@ -63,7 +56,6 @@ $gray-lighter: #c0c0c0;
 				&:hover {
 					background-color: darken($gray-lighter, 3%);
 				}
-
 				.search-bold {
 					font-weight: bold;
 				}
