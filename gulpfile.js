@@ -120,7 +120,7 @@ function testDistMin(done) {
 
 function watch() {
 	// Watch JavaScript files
-	gulp.watch(watchFiles, gulp.series(lint, test, build));
+	gulp.watch(watchFiles, gulp.series(lint, test, partials, toCss, styles, build));
 	// watch test files and re-run unit tests when changed
 	gulp.watch(path.join(testDirectory, '/**/*.js'), gulp.series(test));
 }
