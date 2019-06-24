@@ -59,8 +59,7 @@ function partials() {
 function toCss() {
 	return gulp.src('./src/**/*.scss')
 		.pipe(sass({
-			outputStyle: 'compressed',
-			sourceMap: true
+			outputStyle: 'compressed'
 		}).on('error', sass.logError))
 		.pipe(rename('styles.css'))
 		.pipe(gulp.dest(tmpDirectory));
@@ -130,4 +129,4 @@ exports.test = gulp.series(test);
 exports.testDist = gulp.series(testDist);
 exports.testDistMin = gulp.series(testDistMin);
 exports.build = gulp.series(partials, toCss, styles, build);
-exports.default = gulp.series(lint, test, build, watch);
+exports.default = gulp.series(lint, test, partials, toCss, styles, build, watch);
