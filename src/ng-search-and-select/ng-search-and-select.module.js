@@ -61,11 +61,10 @@
 		$ctrl.ssFocus = ssFocus;
 
 		function initSearchAndSelect() {
-			if (angular.isUndefined($ctrl.ngModel)) {
+			if (angular.isUndefined($ctrl.ngModel) || angular.copy($ctrl.options.length === 0)) {
+				$ctrl.disabled = true;
 				return;
 			}
-
-			$ctrl.disabled = angular.copy($ctrl.options.length === 0);
 
 			validateParams();
 			setParamDefaults();

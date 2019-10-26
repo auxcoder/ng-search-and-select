@@ -18,7 +18,7 @@
 					{ id: 13, name: 'English' },
 					{ id: 14, name: 'Hindi' }
 				];
-			}, 1000);
+			}, 3000);
 			$scope.onChangeSelectSystem = function onChangeSelectSystem(systemTypeObj) {
 				console.log('systemTypeObj > ', systemTypeObj); // eslint-disable-line
 			}
